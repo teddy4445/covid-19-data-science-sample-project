@@ -4,6 +4,7 @@ from scipy.optimize import curve_fit
 
 # project imports
 from confiremed_model import ConfirmedModel
+from linear_model_service import LinearModelService
 from country_covid_history import CountryCovidHistory
 
 
@@ -14,6 +15,17 @@ class AnalysisManager:
 
     def __init__(self):
         pass
+
+    @staticmethod
+    def build_linear_model(data: CountryCovidHistory) -> LinearModelService:
+        linear_popt, linear_pcov = curve_fit(linear_func,
+                                             [i for i in range(len(data.confirmed))],
+                                             data.confirmed)
+
+        return LinearModelService(slope=linear_popt[0],
+                                  x_intercept=linear_popt[1],
+                                  end_date=data.end_date,
+                                  train_size=len(data.confirmed))
 
     @staticmethod
     def fit_cases_analysis(data: CountryCovidHistory) -> list:
